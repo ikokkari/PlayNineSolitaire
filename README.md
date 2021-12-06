@@ -1,4 +1,4 @@
-# PlayNineSolitaire
+# Play Nine Solitaire
 
 A fun little Python programming project suitable for an introduction level course on artificial intelligence and decision making.
 

@@ -5,7 +5,7 @@ import play_nine_player as pnp
 # -----------------------------------------------------------------------------------
 
 # How many hands are played in total to compute the final score.
-TOTAL_HANDS = 1
+TOTAL_HANDS = 10
 
 # Whether the hand actions are printed out, instead of just the final score.
 VERBOSE = True
@@ -24,7 +24,7 @@ MAX_COLUMNS = 4
 DECK_FREQ = [-5, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12]
 
 # The frequencies of cards as the top card of the kitty.
-KITTY_FREQ = [5, 0, 1, 2, 3, 4, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12]
+KITTY_FREQ = [-5, 0, 1, 2, 3, 4, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12]
 
 
 # Compute the score for the finished hand.
@@ -53,6 +53,7 @@ assert score_hand([5, 2, 12, 4], [8, 2, 3, 1]) == 33
 assert score_hand([1, -5, 10, 2], [6, -5, 10, 3]) == 2
 assert score_hand([6, 2, 6, 1], [6, 9, 6, 3]) == 5
 assert score_hand([2, -5, -5, 4], [10, -5, -5, 5]) == -9
+assert score_hand([4, 4, 3, 4, 4, 3], [4, 4, 3, 4, 4, 3]) == -30
 
 
 # Create a masked version of the cards in the hand, based on what has been revealed.

@@ -1,5 +1,11 @@
-# An example player agent for the Play Nine Solitaire project.
+# An example player agent for the Play Nine Solitaire project. This version doesn't
+# make any decisions on its own, but asks the human to provide the decisions via
+# console input.
+
 # Version December 6, 2021, Ilkka Kokkarinen
+
+# The three functions to implement begin here:
+# --------------------------------------------
 
 # Returns a tuple of two strings, the name and the student ID of the author.
 
@@ -7,10 +13,12 @@ def get_author_info():
     return "Ilkka Kokkarinen", "123456789"
 
 
-# Choose the drawing action for the current draw.
+# Choose the drawing action for the current draw. The return value of this function
+# must be either string "k" or "d" for taking the known card from the kitty and for
+# drawing a random card from the deck, respectively.
 
 def choose_drawing_action(top_concealed, bottom_concealed, draws_left, kitty_card):
-    action = "xxx"
+    action = "X"
     while len(action) != 1 or action not in "kdKD":
         action = input("Will you take the (k)itty card or (d)raw from deck? ")
     return action
@@ -23,7 +31,7 @@ def choose_drawing_action(top_concealed, bottom_concealed, draws_left, kitty_car
 # - column is the column number of the card subject to chosen action
 
 def choose_replacement_action(top_concealed, bottom_concealed, draws_left, current_card):
-    action = "xxx"
+    action = "X"
     while len(action) != 1 or action not in "rRtT":
         action = input(f"Will you (r)eplace or (t)urn over a board card? ")
     action_verb = "replace" if action in "rR" else "turn over"

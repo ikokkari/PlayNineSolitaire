@@ -1,11 +1,12 @@
 from random import Random
+from itertools import islice
 import play_nine_player as pnp
 
 # SETTINGS THAT STUDENTS CAN CHANGE DURING THE DEVELOPMENT OF THEIR AGENT START HERE:
 # -----------------------------------------------------------------------------------
 
 # How many hands are played in total to compute the final score.
-TOTAL_HANDS = 10
+TOTAL_HANDS = 50
 
 # Whether the hand actions are printed out, instead of just the final score.
 VERBOSE = True
@@ -16,9 +17,11 @@ SEED = 4242
 # ------------------------------------------------------------------------
 # END OF SETTINGS FOR STUDENTS: DO NOT MODIFY ANYTHING BELOW THIS LINE!!!!
 
-# The minimum and maximum number of columns for playing one hand.
+# The version number of this runner.
+VERSION = "January 5, 2022"
+
+# The minimum number of columns for playing one hand.
 MIN_COLUMNS = 4
-MAX_COLUMNS = 4
 
 # The frequencies of cards in the infinite deck.
 DECK_FREQ = [-5, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12]
@@ -74,7 +77,8 @@ def output_cards(top_cards, bottom_cards, top_revealed, bottom_revealed):
     print(f"Row 1: [{bottom_print} ]")
 
 
-# Play one hand with the given rng, with n cards per row for a given number of draws.
+# Play one hand with the given number of columns in each row, using the given rng to produce the
+# random cards, fpr a given number of draws during the hand.
 
 def play_one_hand(rng, columns, draws_left):
     top_cards = [rng.choice(DECK_FREQ) for _ in range(columns)]
@@ -84,7 +88,7 @@ def play_one_hand(rng, columns, draws_left):
     top_revealed[rng.choice(range(columns))] = True
     bottom_revealed[rng.choice(range(columns))] = True
 
-    # Keep playing as long as there are draws left and some cards are still face down.
+    # Keep playing as long as there are draws left and at least one card is still face down.
     while draws_left > 0 and (False in top_revealed or False in bottom_revealed):
         kitty_card = rng.choice(KITTY_FREQ)
         if VERBOSE:
@@ -92,21 +96,32 @@ def play_one_hand(rng, columns, draws_left):
             print(f"There {draw_string} remaining. Kitty card is {kitty_card}.")
             output_cards(top_cards, bottom_cards, top_revealed, bottom_revealed)
         top_concealed, bottom_concealed = conceal_cards(top_cards, bottom_cards, top_revealed, bottom_revealed)
-        action = pnp.choose_drawing_action(top_concealed, bottom_concealed, draws_left, kitty_card)
+        action = pnp.choose_drawing_action(top_concealed[:], bottom_concealed[:], draws_left, kitty_card)
         assert len(action) == 1 and action in "kKdR", f"Illegal action {action}"
         draws_left -= 1
         current_card = kitty_card if action in "kK" else rng.choice(DECK_FREQ)
         if VERBOSE:
-            print(f"You are holding a {current_card}.")
-        (action, row, column) = pnp.choose_replacement_action(top_concealed, bottom_concealed, draws_left, current_card)
+            if action in 'kK':
+                action_string = 'take the kitty card'
+            else:
+                action_string = 'draw from the deck'
+            article = 'an' if current_card in (8, 11) else 'a'
+            print(f"You have chosen to {action_string}. You are holding {article} {current_card}.")
+        (action, row, column) = pnp.choose_replacement_action(
+            top_concealed[:], bottom_concealed[:], draws_left, current_card
+        )
         assert row in range(2), f"Illegal row {row}"
         assert column in range(columns), f"Illegal column {column}"
         if action in "tT":  # You can only turn over cards that were face down.
+            if VERBOSE:
+                print(f"You are turning over card in row {row} and column {column}.")
             if row == 0:
                 assert not top_revealed[column], f"Card at {row}, {column} already face up"
             else:
                 assert not bottom_revealed[column], f"Card at {row}, {column} already face up"
         if action in "rR":  # Any card on the board can be replaced, be it either face up or face down.
+            if VERBOSE:
+                print(f"You are replacing card in row {row} and column {column}.")
             if row == 0:
                 top_cards[column] = current_card
             else:
@@ -116,6 +131,7 @@ def play_one_hand(rng, columns, draws_left):
         else:
             bottom_revealed[column] = True
 
+    # In the end, everything is wide open.
     top_revealed = [True for _ in range(columns)]
     bottom_revealed = [True for _ in range(columns)]
     output_cards(top_cards, bottom_cards, top_revealed, bottom_revealed)
@@ -124,16 +140,27 @@ def play_one_hand(rng, columns, draws_left):
         print(f"The score for the completed hand is {hand_score}.")
     return hand_score
 
+# A utility function taken from Python problems.
 
-# Play the entire game of all the hands.
+def pyramid(n=1, goal=5, inc=1):
+    count = 0
+    while True:
+        yield n
+        count += 1
+        if count == goal:
+            goal, count, n = goal + inc, 0, n + 1
+
+# Play the entire game for all the hands.
 
 def play_all_hands():
-    rng, total_score = Random(SEED), 0
-    for hand in range(TOTAL_HANDS):
-        columns = rng.randint(MIN_COLUMNS, MAX_COLUMNS)
+    total_score = 0
+    for (hand, columns) in enumerate(islice(pyramid(MIN_COLUMNS, 5, 1), TOTAL_HANDS)):
+        rng = Random(SEED + hand)
         draws = 2 * columns + rng.randint(1, 3)
         if VERBOSE:
-            print(f"\nStarting hand #{hand + 1} with {columns} columns on board.")
+            print()
+            print("*-" * 21)
+            print(f"Starting hand #{hand + 1} with {columns} columns on board.")
         try:
             current_score = play_one_hand(rng, columns, draws)
         except Exception as e:
@@ -145,7 +172,7 @@ def play_all_hands():
 
 
 if __name__ == "__main__":
-    print("Play Nine Solitaire runner, version December 6, 2021, Ilkka Kokkarinen.")
+    print(f"Play Nine Solitaire runner, version of {VERSION}, Ilkka Kokkarinen.")
     author_name, author_id = pnp.get_author_info()
     final_score = play_all_hands()
-    print(f"{author_name}, {author_id}: {final_score}")
+    print(f"\n{author_name}, {author_id}: {final_score}")

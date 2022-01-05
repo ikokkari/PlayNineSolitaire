@@ -6,7 +6,7 @@ import play_nine_player as pnp
 # -----------------------------------------------------------------------------------
 
 # How many hands are played in total to compute the final score.
-TOTAL_HANDS = 50
+TOTAL_HANDS = 10
 
 # Whether the hand actions are printed out, instead of just the final score.
 VERBOSE = True

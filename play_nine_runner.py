@@ -18,7 +18,7 @@ SEED = 4242
 # END OF SETTINGS FOR STUDENTS: DO NOT MODIFY ANYTHING BELOW THIS LINE!!!!
 
 # The version number of this runner.
-VERSION = "January 5, 2022"
+VERSION = "January 19, 2022"
 
 # The minimum number of columns for playing one hand.
 MIN_COLUMNS = 4
@@ -140,6 +140,7 @@ def play_one_hand(rng, columns, draws_left):
         print(f"The score for the completed hand is {hand_score}.")
     return hand_score
 
+
 # A utility function taken from Python problems.
 
 def pyramid(n=1, goal=5, inc=1):
@@ -150,11 +151,12 @@ def pyramid(n=1, goal=5, inc=1):
         if count == goal:
             goal, count, n = goal + inc, 0, n + 1
 
+
 # Play the entire game for all the hands.
 
 def play_all_hands():
     total_score = 0
-    for (hand, columns) in enumerate(islice(pyramid(MIN_COLUMNS, 5, 1), TOTAL_HANDS)):
+    for (hand, columns) in enumerate(islice(pyramid(MIN_COLUMNS, 40, 10), TOTAL_HANDS)):
         rng = Random(SEED + hand)
         draws = 2 * columns + rng.randint(1, 3)
         if VERBOSE:

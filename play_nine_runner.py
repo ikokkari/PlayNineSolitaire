@@ -6,7 +6,7 @@ import play_nine_player as pnp
 # -----------------------------------------------------------------------------------
 
 # How many hands are played in total to compute the final score.
-TOTAL_HANDS = 10
+TOTAL_HANDS = 1000
 
 # Whether the hand actions are printed out, instead of just the final score.
 VERBOSE = True
@@ -18,7 +18,7 @@ SEED = 4242
 # END OF SETTINGS FOR STUDENTS: DO NOT MODIFY ANYTHING BELOW THIS LINE!!!!
 
 # The version number of this runner.
-VERSION = "January 19, 2022"
+VERSION = "March 1, 2022"
 
 # The minimum number of columns for playing one hand.
 MIN_COLUMNS = 4
@@ -70,11 +70,12 @@ def conceal_cards(top_cards, bottom_cards, top_revealed, bottom_revealed):
 # Print out the current state of the hand.
 
 def output_cards(top_cards, bottom_cards, top_revealed, bottom_revealed):
-    top_row, bottom_row = conceal_cards(top_cards, bottom_cards, top_revealed, bottom_revealed)
-    top_print = " ".join(f"{str(card):>3}" for card in top_row)
-    bottom_print = " ".join(f"{str(card):>3}" for card in bottom_row)
-    print(f"Row 0: [{top_print} ]")
-    print(f"Row 1: [{bottom_print} ]")
+    if VERBOSE:
+        top_row, bottom_row = conceal_cards(top_cards, bottom_cards, top_revealed, bottom_revealed)
+        top_print = " ".join(f"{str(card):>3}" for card in top_row)
+        bottom_print = " ".join(f"{str(card):>3}" for card in bottom_row)
+        print(f"Row 0: [{top_print} ]")
+        print(f"Row 1: [{bottom_print} ]")
 
 
 # Play one hand with the given number of columns in each row, using the given rng to produce the
@@ -156,7 +157,7 @@ def pyramid(n=1, goal=5, inc=1):
 
 def play_all_hands():
     total_score = 0
-    for (hand, columns) in enumerate(islice(pyramid(MIN_COLUMNS, 40, 10), TOTAL_HANDS)):
+    for (hand, columns) in enumerate(islice(pyramid(MIN_COLUMNS, 40, 60), TOTAL_HANDS)):
         rng = Random(SEED + hand)
         draws = 2 * columns + rng.randint(1, 3)
         if VERBOSE:

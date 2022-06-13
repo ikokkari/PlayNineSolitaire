@@ -6,19 +6,19 @@ import play_nine_player as pnp
 # -----------------------------------------------------------------------------------
 
 # How many hands are played in total to compute the final score.
-TOTAL_HANDS = 1000
+TOTAL_HANDS = 500
 
 # Whether the hand actions are printed out, instead of just the final score.
 VERBOSE = True
 
 # The seed value for the rng used to draw cards.
-SEED = 4242
+SEED = 135745
 
 # ------------------------------------------------------------------------
 # END OF SETTINGS FOR STUDENTS: DO NOT MODIFY ANYTHING BELOW THIS LINE!!!!
 
 # The version number of this runner.
-VERSION = "March 1, 2022"
+VERSION = "June 13, 2022"
 
 # The minimum number of columns for playing one hand.
 MIN_COLUMNS = 4
@@ -79,7 +79,7 @@ def output_cards(top_cards, bottom_cards, top_revealed, bottom_revealed):
 
 
 # Play one hand with the given number of columns in each row, using the given rng to produce the
-# random cards, fpr a given number of draws during the hand.
+# random cards, for a given number of draws during the hand.
 
 def play_one_hand(rng, columns, draws_left):
     top_cards = [rng.choice(DECK_FREQ) for _ in range(columns)]
@@ -178,4 +178,4 @@ if __name__ == "__main__":
     print(f"Play Nine Solitaire runner, version of {VERSION}, Ilkka Kokkarinen.")
     author_name, author_id = pnp.get_author_info()
     final_score = play_all_hands()
-    print(f"\n{author_name}, {author_id}: {final_score}")
+    print(f"\n{author_name}, {author_id}: SEED={SEED}, TOTAL_HANDS={TOTAL_HANDS}, SCORE={final_score}")
